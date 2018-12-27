@@ -22,6 +22,7 @@ public:
 	Stack();
 	virtual ~Stack();
 	void push(T);
+	bool isEmpty();
 	T pop();
 	T peep();
 };
