@@ -45,3 +45,11 @@ T Stack<T,size>::peep()
 		return top->data;
 	return 0;
 }
+
+template <typename T,int size>
+bool Stack<T,size>::isEmpty()
+{
+	if(top==NULL)
+		return true;
+	return false;
+}
