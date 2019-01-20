@@ -101,6 +101,7 @@ void Hospital::getData()
 	cout<<"Enter Age:";
 	cin>>obj->age;
 	obj->id=id;
+	id++;
 	int choice;
 	int parameters[11];
 	for(int i=0;i<10;i++)
@@ -171,7 +172,6 @@ void Hospital::getData()
 	for(int i=0;i<11;i++)
 		obj->healthscore+=parameters[i];
 	int pri=getPriority(obj->healthscore);
-	cout<<pri;
 	pq.enqueue(*obj,pri);
 }
 
@@ -183,10 +183,10 @@ bool Hospital::isEmpty()
 }
 void Hospital::getAll()
 {
-	DS *patients;
-	patients=pq.sendAll(count);
+	DS *patients = new DS[count];
+	pq.sendAll(patients,count);
 	for(int i=0;i<count;i++)
-		displayPatient(patients[i]);
+		displayPatient(*(patients + i));
 }
 
 int main()

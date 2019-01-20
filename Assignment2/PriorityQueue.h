@@ -25,7 +25,7 @@ public:
 	void enqueue(T,int);
 	T dequeue();
 	bool isEmpty();
-
+	void sendAll(T*,int);
 };
 #include"PriorityQueue.tpp"
 #endif /* PRIORITYQUEUE_H_ */

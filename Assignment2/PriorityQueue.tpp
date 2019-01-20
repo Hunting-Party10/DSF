@@ -6,6 +6,8 @@
  */
 
 #include "PriorityQueue.h"
+#include<iostream>
+using namespace std;
 template<typename T>
 PriorityQueue<T>::PriorityQueue() {
 	// TODO Auto-generated constructor stub
@@ -47,8 +49,6 @@ template<typename T>
 T PriorityQueue<T>::dequeue()
 {
 
-	if(isEmpty())
-		return 0;
 	Node *current = front;
 	Node *temp1 = front;
 	Node *temp2;
@@ -84,5 +84,16 @@ bool PriorityQueue<T>::isEmpty()
 		return true;
 	return false;
 }
-
+template <typename T>
+void PriorityQueue<T>::sendAll(T *store,int count)
+{
+	int c=0;
+	Node *current=front;
+	while(c!=count && current!=NULL)
+	{
+		store[c]=current->data;
+		current=current->next;
+		c++;
+	}	
+}
 
