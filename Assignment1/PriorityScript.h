@@ -8,9 +8,9 @@
 
 
 
-int priority(char operator)
+int priority(char op)
 {
-	switch(operator)
+	switch(op)
 	{
 		case '^':
 			return 5;
@@ -28,9 +28,9 @@ int priority(char operator)
 			return -1;
 	}
 }
-char assosivity(char operator)
+char assosivity(char op)
 {
-	switch(operator)
+	switch(op)
 	{
 		case '^':
 			return 'r';

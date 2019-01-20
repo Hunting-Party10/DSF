@@ -2,6 +2,7 @@
 #include"Stack.h"
 #include"PriorityScript.h"
 #include<string.h>
+#include<math.h>
 #define max 255
 using namespace std;
 
@@ -26,12 +27,13 @@ public:
 	void getExpression();
 	void displayExpression();
 	void displayConversion();
-	float postEval();
-	float preEval();
+	double postEval();
+	double preEval();
 	void reverse(int);
 	bool isEntered();
+	double performOperation(double,double,char);
+	bool validate();
 };
-
 void Assignment1::getExpression()
 {
 	delete exp;
@@ -96,7 +98,13 @@ void Assignment1::reverse(int k)
 		int j=len-1;
 		for(int i=0;i<len;i++)
 		{
-			exp[i]=temp[j--];
+			if(temp[j]== '(')
+				exp[i]=')';
+			else if(temp[j]==')')
+				exp[i]='(';
+			else
+				exp[i]=temp[j];
+			j--;
 		}
 	}
 	else if(k == 1)
@@ -107,7 +115,13 @@ void Assignment1::reverse(int k)
 		int j=len-1;
 		for(int i=0;i<len;i++)
 		{
-			ans[i]=temp[j--];
+			if(temp[j]== '(')
+				ans[i]=')';
+			else if(temp[j]==')')
+				ans[i]='(';
+			else
+				ans[i]=temp[j];
+			j--;
 		}
 	}
 }
@@ -159,24 +173,96 @@ bool Assignment1::isEntered()
 		return false;
 	return true;
 }
-float Assignment1::postEval()
+double Assignment1::performOperation(double a,double b,char op)
+{
+	switch(op)
+	{
+	case '+':return a+b;
+	case '-':return a-b;
+	case '*':return a*b;
+	case '/':return a/b;
+	case '^':return pow(a,b);
+	default:return 0.0;
+	}
+}
+double Assignment1::postEval()
 {
 	postfix();
-	return 0;
-}
+	int len=strlen(ans);
+	displayConversion();
+	Stack<double,max> s;
+	for(int i=0;i<len;i++)
+	{
+		if(isalnum(ans[i]))
+		{
+			double x;
+			cout<<"Enter Value for variable ("<<ans[i]<<"):";
+			cin>>x;
+			s.push(x);
+		}
+			else
+		{
+			double x=s.pop();
+			double y=s.pop();
+			s.push(performOperation(y,x,ans[i]));
+		}
+	}
+	return s.pop();
 
-float Assignment1::preEval()
+}
+double Assignment1::preEval()
 {
 	prefix();
-	return 0;
+	int len=strlen(ans);
+	reverse(1);
+	Stack<double,max> s;
+	for(int i=0;i<len;i++)
+	{
+		if(isalnum(ans[i]))
+		{
+			double x;
+			cout<<"Enter Value for variable ("<<ans[i]<<"):";
+			cin>>x;
+			s.push(x);
+		}
+		else
+		{
+			double x=s.pop();
+			double y=s.pop();
+			s.push(performOperation(x,y,ans[i]));
+		}
+	}
+	return s.pop();
 }
-
+bool Assignment1::validate()
+{
+	int bracket_count=0;
+	int l=strlen(exp);
+	int operatorcount=0,operandcount=0;
+	for(int i=0;i<l;i++)
+	{
+		if(bracket_count<0)
+			return false;
+		if(exp[i]=='(')
+			bracket_count++;
+		else if(exp[i]==')')
+			bracket_count--;
+		else if(priority(exp[i])>0)
+			operatorcount++;
+		else
+			operandcount++;
+	}
+	if(operatorcount+1==operandcount && operatorcount!=0)
+		return true;
+	return false;
+}
 
 int main()
 {
 	Assignment1 obj;
 	int choice;
 	int choice2;
+	bool flag;
 	do
 	{
 		cout<<"\n\nPress 1 to Enter Expression\n";
@@ -189,11 +275,18 @@ int main()
 		switch(choice)
 		{
 			case 1:
-				cout<<"\nEnter the Expression:";
-				obj.getExpression();
+				do
+				{
+					cout<<"\nEnter the Expression:";
+					obj.getExpression();
+					flag=obj.validate();
+					if(!flag)
+						cout<<"Please Enter a valid Expression\n";
+				}
+				while(!flag);
 				break;
 			case 2:
-				cout<<"\nPostfix Form:";
+				cout<<"\nPretfix Form:";
 				obj.prefix();
 				obj.displayConversion();
 				break;
@@ -205,17 +298,17 @@ int main()
 			case 4:
 				if(!obj.isEntered())
 					break;
-				cout<<"Press 1 for Prefix Evaluation\n";
+				cout<<"\nPress 1 for Prefix Evaluation\n";
 				cout<<"Press 2 for Postfix Evaluation\n";
 				cout<<"Enter Choice:";
 				cin>>choice2;
 				switch(choice2)
 				{
 				case 1:
-					cout<<"Evaluation = "<<obj.preEval();
+					cout<<"\nPrefix Evaluation = "<<obj.preEval();
 					break;
 				case 2:
-					cout<<"Evaluation = "<<obj.postEval();
+					cout<<"\nPostfix Evaluation = "<<obj.postEval();
 					break;
 				case 3:
 					break;
@@ -232,3 +325,4 @@ int main()
 	while(choice!=5);
 	return 0;
 }
+
