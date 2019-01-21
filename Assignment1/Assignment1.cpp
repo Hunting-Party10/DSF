@@ -38,7 +38,6 @@ void Assignment1::getExpression()
 {
 	delete exp;
 	exp=new char[max];
-	cin.ignore();
 	cin.getline(exp,max);
 }
 void Assignment1::displayExpression()
@@ -272,6 +271,7 @@ int main()
 		cout<<"Press 5 to exit\n";
 		cout<<"Enter Choice:";
 		cin>>choice;
+		cin.ignore();
 		switch(choice)
 		{
 			case 1:
