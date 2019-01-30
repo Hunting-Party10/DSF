@@ -6,8 +6,6 @@
  */
 
 #include "PriorityQueue.h"
-#include<iostream>
-using namespace std;
 template<typename T>
 PriorityQueue<T>::PriorityQueue() {
 	// TODO Auto-generated constructor stub
