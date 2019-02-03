@@ -6,6 +6,7 @@
  */
 #include<iostream>
 #include<algorithm>
+#include<math.h>
 using namespace std;
 
 template <typename T>
@@ -22,23 +23,23 @@ public:
 	virtual ~BinaryTree();
 	void deleteTree(Node *);
 	void display();
-	bool clone(BinaryTree);
+	void clone(BinaryTree*);
 	void insert(T);
 	int depth();
 	int getDepth(Node*);
 	bool isEmpty();
 	void printgivenLevel(Node*,int);
-	//void showleaves();
+	void printleaves();
+	void copy(Node *,Node *);
 };
 template<typename T>
 BinaryTree<T>::BinaryTree() {
 	root = NULL;
 	// TODO Auto-generated constructor stub
-
 }
 template<typename T>
 BinaryTree<T>::~BinaryTree() {
-	//do post order traversal and keep deleting nodes
+	//do post order traversal and keep deleting Nodes
 	deleteTree(root);
 	// TODO Auto-generated destructor stub
 }
@@ -53,17 +54,24 @@ void BinaryTree<T>::deleteTree(Node *r) {
 template<typename T>
 void BinaryTree<T>::display()
 {
+	int k = depth();
 	for(int i=1;i<=depth();i++)
 	{
+		for(int j=0;j<=k-i;j++)
+			cout<<"  ";
 		printgivenLevel(root,i);
+		cout<<"\n";
 	}
 }
 template<typename T>
 void BinaryTree<T>::printgivenLevel(Node *t,int level)
 {
+	//static int le=level;
 	if(level == 1)
 	{
 		cout<<t->data<<" ";
+		//for(int i=0;i<le+2;i++)
+			//cout<<" ";
 	}
 	else
 	{
@@ -158,9 +166,34 @@ bool BinaryTree<T>::isEmpty()
 	return root == NULL;
 }
 
+template <typename T>
+void BinaryTree<T>::printleaves()
+{
+	printgivenLevel(root,depth());
+}
+template <typename T>
+void BinaryTree<T>::clone(BinaryTree *t)
+{
+	copy(root,t->root);
+	cout<<t->depth();
+}
+template <typename T>
+void BinaryTree<T>::copy(Node *original,Node *c)
+{
+	if(original != NULL)
+	{
+		c = new Node;
+		c->data = original->data;
+		c->left= NULL;
+		c->right = NULL;
+		copy(original->left,c->left);
+		copy(original->right,c->right);
+	}
+}
+
 int main()
 {
-	BinaryTree<int> T,clone;
+	BinaryTree<int> T,c;
 	int data;
 	int choice;
 	do
@@ -188,8 +221,11 @@ int main()
 			cout<<"Depth of Binary Tree is: "<<T.depth();
 			break;
 		case 4:
+			T.printleaves();
 			break;
 		case 5:
+			T.clone(&c);
+			T.display();
 			break;
 		case 6:
 			break;
