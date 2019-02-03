@@ -1,10 +1,10 @@
 #include<iostream>
 #include"Stack.h"
-#include"PriorityScript.h"
 #include<string.h>
 #include<math.h>
 #define max 255
 using namespace std;
+
 
 class Assignment1
 {
@@ -24,6 +24,8 @@ public:
 	}
 	void postfix();
 	void prefix();
+	int	priority(char);
+	char assosivity(char);
 	void getExpression();
 	void displayExpression();
 	void displayConversion();
@@ -251,10 +253,44 @@ bool Assignment1::validate()
 		else
 			operandcount++;
 	}
-	if(operatorcount+1==operandcount && operatorcount!=0)
+	if(operatorcount+1==operandcount && operatorcount!=0 && bracket_count==0)
 		return true;
 	return false;
 }
+
+int Assignment1::priority(char op)
+{
+	switch(op)
+	{
+		case '^':
+			return 6;
+		case '/':
+			return 5;
+		case '*':
+			return 5;
+		case '+':
+			return 4;
+		case '-':
+			return 3;
+		case '!':
+			return 2;
+		case '(':
+			return 0;
+		default:
+			return -1;
+	}
+}
+char Assignment1::assosivity(char op)
+{
+	switch(op)
+	{
+		case '^':
+			return 'r';
+		default:
+			return 'l';
+	}
+}
+
 
 int main()
 {
@@ -325,4 +361,5 @@ int main()
 	while(choice!=5);
 	return 0;
 }
+
 
