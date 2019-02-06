@@ -54,11 +54,9 @@ void BinaryTree<T>::deleteTree(Node *r) {
 template<typename T>
 void BinaryTree<T>::display()
 {
-	int k = depth();
 	for(int i=1;i<=depth();i++)
 	{
-		for(int j=0;j<=k-i;j++)
-			cout<<"  ";
+		cout<<"Level "<<i<<":";
 		printgivenLevel(root,i);
 		cout<<"\n";
 	}
@@ -234,4 +232,3 @@ int main()
 	while(choice!=6);
 	return 0;
 }
-
