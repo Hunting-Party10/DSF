@@ -9,7 +9,7 @@
 #define STACK_H_
 
 
-template <typename T,int size>
+template <typename T>
 class Stack {
 private:
 	typedef struct Node

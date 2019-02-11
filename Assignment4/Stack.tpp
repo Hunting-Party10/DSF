@@ -7,13 +7,13 @@
 
 #include "Stack.h"
 
-template <typename T,int size>
+template <typename T>
 
-Stack<T,size>::Stack() {
+Stack<T>::Stack() {
 	top = NULL;
 }
-template <typename T,int size>
-Stack<T,size>::~Stack() {
+template <typename T>
+Stack<T>::~Stack() {
 	while(top != NULL)
 	{
 		Node *temp=top;
@@ -21,16 +21,16 @@ Stack<T,size>::~Stack() {
 		delete temp;
 	}
 }
-template <typename T,int size>
-void Stack<T,size>::push(T n)
+template <typename T>
+void Stack<T>::push(T n)
 {
 	Node *temp=new Node;
 	temp->data=n;
 	temp->next=top;
 	top = temp;
 }
-template <typename T,int size>
-T Stack<T,size>::pop()
+template <typename T>
+T Stack<T>::pop()
 {
 	T data= top->data;
 	Node *temp=top;
@@ -38,16 +38,16 @@ T Stack<T,size>::pop()
 	delete temp;
 	return data;
 }
-template <typename T,int size>
-T Stack<T,size>::peep()
+template <typename T>
+T Stack<T>::peep()
 {
 	if(top != NULL)
 		return top->data;
 	return 0;
 }
 
-template <typename T,int size>
-bool Stack<T,size>::isEmpty()
+template <typename T>
+bool Stack<T>::isEmpty()
 {
 	if(top==NULL)
 		return true;

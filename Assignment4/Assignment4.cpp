@@ -27,7 +27,16 @@ public:
 	BinaryTree();
 	~BinaryTree();
 	void deleteTree(Node*);
-	void constructExpression(char[],char[]);
+	void constructExpression(char[]);
+	void Rpreorder();
+	void Rpostorder();
+	void Rinorder();
+	void inorder(Node*);
+	void preorder(Node*);
+	void postorder(Node*);
+	void NRpreorder();
+	void NRpostorder();
+	void NRinorder();
 };
 
 template<typename T>
@@ -51,103 +60,179 @@ void BinaryTree<T>::deleteTree(Node *r) {
 }
 
 template <typename T>
-void BinaryTree<T>::constructExpression(char infix[],char postfix[])
+void BinaryTree<T>::constructExpression(char postfix[])
 {
-
-}
-
-int priority(char op)
-{
-	switch(op)
+	Stack<Node*> s;
+	for (int i = 0; i < strlen(postfix); ++i)
 	{
-		case '^':
-			return 6;
-		case '/':
-			return 5;
-		case '*':
-			return 5;
-		case '+':
-			return 4;
-		case '-':
-			return 3;
-		case '!':
-			return 2;
-		case '(':
-			return 0;
-		default:
-			return -1;
-	}
-}
-char assosivity(char op)
-{
-	switch(op)
-	{
-		case '^':
-			return 'r';
-		default:
-			return 'l';
-	}
-}
-void postfix(char exp[],char ans[])
-{
-	int len=strlen(exp);
-	ans=new char(len);
-	int k=0;
-	Stack<char,max> s;
-	for(int i=0;i<len;i++)
-	{
-		if(priority(exp[i]) == -1)
+		//cout<<postfix[i];
+		if(isalnum(postfix[i]))
 		{
-			if(exp[i]==')')
-			{
-				char t;
-				do
-				{
-					t=s.pop();
-					if(t != '(')
-						ans[k++]=t;
-				}
-				while(t!='(');
-			}
-			else
-				ans[k++]=exp[i];
+			Node *temp = new Node;
+			temp->data = postfix[i];
+			temp->left = NULL;
+			temp->right = NULL;
+			s.push(temp);
 		}
-		else if(priority(exp[i]) == 0)
-			s.push(exp[i]);
 		else
 		{
-			while(priority(s.peep()) > priority(exp[i]))
-				ans[k++]=s.pop();
-			if(priority(s.peep()) == priority(exp[i]) && assosivity(exp[i]) == 'l')
-				ans[k++]=s.pop();
-			s.push(exp[i]);
+			Node *t1 = s.pop();
+			Node *t2 = s.pop();
+			Node *parent = new Node;
+			parent->data = postfix[i];
+			parent->left = t2;
+			parent->right = t1;
+			s.push(parent);
 		}
 	}
-	while(!s.isEmpty())
-		ans[k++]=s.pop();
+	root = s.pop();
 }
+
+template<typename T>
+void BinaryTree<T>::Rinorder()
+{
+	cout<<"[ ";
+	inorder(root);
+	cout<<" ]";
+}
+template <typename T>
+void BinaryTree<T>::Rpreorder()
+{
+	cout<<"[ ";
+	preorder(root);
+	cout<<" ]";
+}
+template <typename T>
+void BinaryTree<T>::Rpostorder()
+{
+	cout<<"[ ";
+	postorder(root);
+	cout<<" ]";
+}
+
+
+template<typename T>
+void BinaryTree<T>::inorder(Node *root)
+{
+	if(root != NULL)
+	{
+		inorder(root->left);
+		cout<<root->data<<" ";
+		inorder(root->right);
+	}
+}
+template <typename T>
+void BinaryTree<T>::preorder(Node *root)
+{
+	if(root != NULL)
+		{
+			cout<<root->data<<" ";
+			inorder(root->left);
+			inorder(root->right);
+		}
+}
+template <typename T>
+void BinaryTree<T>::postorder(Node *root)
+{
+	if(root != NULL)
+	{
+		inorder(root->left);
+		inorder(root->right);
+		cout<<root->data<<" ";
+	}
+}
+
+template <typename T>
+void BinaryTree<T>::NRpreorder()
+{
+	Stack<Node*> s;
+	s.push(root);
+	cout<<"[";
+	while(!s.isEmpty())
+	{
+		Node *temp = s.pop();
+		cout<<temp->data<<" ";
+		if(temp->left != NULL)
+			s.push(temp->left);
+		if(temp->right != NULL)
+			s.push(temp->right);
+	}
+	cout<<"]";
+}
+
+template <typename T>
+void BinaryTree<T>::NRpostorder()
+{
+	if(root == NULL)
+		return;
+	cout<<"[ ";
+	Stack<Node*> s1;
+	Stack<Node*> s2;
+	s1.push(root);
+	Node *temp;
+	while(!s1.isEmpty())
+	{
+		temp = s1.pop();
+		s2.push(temp);
+		if(temp->left != NULL)
+			s1.push(temp->left);
+		if(temp->right != NULL)
+			s2.push(temp->right);
+	}
+	while(!s2.isEmpty())
+	{
+		temp = s2.pop();
+		cout<<temp->data<<" ";
+	}
+	cout<<"]";
+}
+
+template <typename T>
+void BinaryTree<T>::NRinorder()
+{
+	Stack<Node*> s;
+	cout<<"[ ";
+	Node *temp = root;
+		
+	while(temp != NULL || !s.isEmpty())
+	{
+		while(temp !=NULL)
+		{
+			s.push(temp);
+			temp = temp->left;
+		}
+		temp = s.pop();
+		cout<<temp->data<<" ";
+		temp = temp->right;
+	}
+	cout<<"]";
+}
+
 
 
 
 int main() {
 	int choice1,choice2;
-	char exp[expsize],postexp[expsize];
-	cout<<"Enter Expression to construct an Expression Tree:\n";
-	cin.ignore();
-	cin.getline(exp,expsize);
+	char postexp[expsize];
+	BinaryTree<char> B;
+	cout<<"Enter Expression to construct an Expression Tree:";
+	cin.getline(postexp,expsize);
+	cout<<"\n";
+	B.constructExpression(postexp);
 	do
 	{
 
-		cout<<"Press 2 to display Expression\n";
-		cout<<"Press 3 Recursive Traversals\n";
-		cout<<"Press 4 Non Recursive Traversals\n";
-		cout<<"Press 5 to Exit\n";
+		cout<<"\n\nPress 1 to display Expression\n";
+		cout<<"Press 2 Recursive Traversals\n";
+		cout<<"Press 3 Non Recursive Traversals\n";
+		cout<<"Press 4 to Exit\n";
+		cout<<"Enter Choice:";
 		cin>>choice1;
 		switch(choice1)
 		{
 		case 1:
 			cout<<"Entered Expression is:";
-			cout<<exp;
+			cout<<postexp;
 			break;
 		case 2:
 			do
@@ -155,21 +240,26 @@ int main() {
 				cout<<"\n\nPress 1 for Recursive Pre-order Traversal\n";
 				cout<<"Press 2 for Recursive In-Order Traversal\n";
 				cout<<"Press 3 for Recursive Post-Order Traversal\n";
-				cout<<"Press 4 to Exit";
+				cout<<"Press 4 to Exit\n";
+				cout<<"Enter Choice:";
 				cin>>choice2;
 				switch(choice2)
 				{
 				case 1:
+					B.Rpreorder();
 					break;
 				case 2:
+					B.Rinorder();
 					break;
 				case 3:
+					B.Rpostorder();
 					break;
 				case 4:
 					break;
 				default:
 					cout<<"Enter Valid Option\n";
 				}
+				cout<<"\n\n";
 			}
 			while(choice2 != 4);
 			break;
@@ -179,21 +269,26 @@ int main() {
 				cout<<"\n\nPress 1 for Non-Recursive Pre-order Traversal\n";
 				cout<<"Press 2 for Non-Recursive In-Order Traversal\n";
 				cout<<"Press 3 for Non-Recursive Post-Order Traversal\n";
-				cout<<"Press 4 to Exit";
+				cout<<"Press 4 to Exit\n";
+				cout<<"Enter Choice:";
 				cin>>choice2;
 				switch(choice2)
 				{
 				case 1:
+					B.NRpreorder();
 					break;
 				case 2:
+					B.NRinorder();
 					break;
 				case 3:
+					B.NRpostorder();
 					break;
 				case 4:
 					break;
 				default:
 					cout<<"Enter Valid Option\n";
 				}
+				cout<<"\n\n";
 			}
 			while(choice2 != 4);
 			break;
