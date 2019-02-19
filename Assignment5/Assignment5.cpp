@@ -146,8 +146,14 @@ void BST::NRinorder()
 
 int BST::search(int data)
 {
+	
 	if(root == NULL)
 		return 0;
+	if(invert == true)
+	{
+		mirrorTree();
+		invert = false;
+	}
 	Node *current = root;
 	while(true)
 	{
@@ -172,8 +178,14 @@ int BST::search(int data)
 
 int BST::Delete(int data)
 {
+
 	if(root == NULL)
 		return 0;
+	if(invert == true)
+	{
+		mirrorTree();
+		invert = false;
+	}
 	Node *current = root;
 	Node *previous;
 	while(true)
