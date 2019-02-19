@@ -1,6 +1,6 @@
 #include<iostream>
 #include"Stack.h"
-
+#include<limits>
 using namespace std;
 
 
@@ -14,16 +14,23 @@ private:
 		int data;
 	};	
 	Node *root;
+	bool invert;
 	void destroyTree(Node*);
 	void fixBST(Node **,Node **);
+	void printgivenLevel(Node*,int);
+	int getDepth(Node*);
 	
 public:
-	BST(){root = NULL;}
+	BST(){root = NULL; invert = false;}
 	~BST(){destroyTree(root);}
 	int insert(int);
 	void NRinorder();
 	int search(int);
 	int Delete(int);
+	void display();
+	int depth();
+	void mirrorTree();
+	void mirror(Node*);
 };
 
 
@@ -51,33 +58,67 @@ int BST::insert(int data)
 	{
 		if(data == current->data)
 			return 0;
-		
-		if( data > current->data)
+		if(invert == false)
 		{
-			if(current->right != NULL)
-				current = current->right;
+			if( data > current->data)
+			{
+				if(current->right != NULL)
+					current = current->right;
+				else
+				{
+					Node *temp = new Node;
+					temp->data = data;
+					temp->left = NULL;
+					temp ->right = NULL;
+					current->right = temp;
+					return 1;
+				}		
+			}
 			else
 			{
-				Node *temp = new Node;
-				temp->data = data;
-				temp->left = NULL;
-				temp ->right = NULL;
-				current->right = temp;
-				return 1;
-			}		
+				if(current->left != NULL)
+					current = current->left;
+				else
+				{
+					Node *temp = new Node;
+					temp->data = data;
+					temp->left = NULL;
+					temp ->right = NULL;
+					current->left = temp;
+					return 1;
+				}
+			}
 		}
 		else
 		{
-			if(current->left != NULL)
-				current = current->left;
+			if( data > current->data)
+			{
+				
+				if(current->left != NULL)
+					current = current->left;
+				else
+				{
+					Node *temp = new Node;
+					temp->data = data;
+					temp->left = NULL;
+					temp ->right = NULL;
+					current->left = temp;
+					return 1;
+				}		
+			}
 			else
 			{
-				Node *temp = new Node;
-				temp->data = data;
-				temp->left = NULL;
-				temp ->right = NULL;
-				current->left = temp;
-				return 1;
+				if(current->right != NULL)
+					current = current->right;
+				else
+				{
+					Node *temp = new Node;
+					temp->data = data;
+					temp->left = NULL;
+					temp ->right = NULL;
+					current->right = temp;
+					return 1;
+				}
 			}
 		}
 	}
@@ -208,6 +249,69 @@ void BST::fixBST(Node **current,Node **previous)
 	}
 }
 
+void BST::display()
+{
+	for(int i=1;i<=depth();i++)
+	{
+		cout<<"Level "<<i<<":";
+		printgivenLevel(root,i);
+		cout<<"\n";
+	}
+}
+
+
+void BST::printgivenLevel(Node *t,int level)
+{
+	if(level == 1)
+		cout<<t->data<<" ";
+	else
+	{
+		if(t->left != NULL)
+			printgivenLevel(t->left,level-1);
+		if(t->right!= NULL)
+			printgivenLevel(t->right,level-1);
+	}
+}
+
+int BST::depth()
+{
+	if(root == NULL)
+		return 0;
+	return getDepth(root);
+}
+
+int BST::getDepth(Node *current)
+{
+	int left=0,right=0;
+	if(current->left != NULL)
+		left=getDepth(current->left);
+	if(current->right != NULL)
+		right=getDepth(current->right);
+	return (max(left,right)+1);
+}
+
+void BST::mirrorTree()
+{
+	mirror(root);
+	if(invert == false)
+		invert = true;
+	else
+		invert = false;
+}
+
+void BST::mirror(Node *root)
+{
+	if(root != NULL)
+	{
+		mirror(root->left);
+		mirror(root->right);
+
+		Node *temp = root->left;
+		root->left = root->right;
+		root->right = temp;
+	}
+}
+
 int main()
 {
 	int choice;
@@ -219,7 +323,7 @@ int main()
 		cout<<"\n\nPress 1 to insert Element\n";
 		cout<<"Press 2 to delete Element\n";
 		cout<<"Press 3 to search Element\n";
-		cout<<"Press 4 for Mirrored Tree\n";
+		cout<<"Press 4 for Mirrored BST\n";
 		cout<<"Press 5 for Level order display\n";
 		cout<<"Press 6 for In-Order display\n";
 		cout<<"Press 7 to Exit\n";
@@ -254,7 +358,12 @@ int main()
 				else
 					cout<<"\nData found\n";
 				break;
+			case 4:
+				T.mirrorTree();
+				cout<<"Tree Mirrored\n";
+				break;
 			case 5:
+				T.display();
 				break;
 			case 6:
 				T.NRinorder();
