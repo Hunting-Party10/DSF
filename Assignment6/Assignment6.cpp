@@ -1,6 +1,12 @@
 #include<iostream>
 #include<string.h>
+#include"Stack.h"
 using namespace std;
+
+/*
+1-discovered
+2-visited
+*/
 
 struct date
 {
@@ -16,6 +22,7 @@ struct vertex
 	char name[25];
 	int comments;
 	struct date dob;
+	int discovered;
 };
 
 struct edge
@@ -33,6 +40,7 @@ void createNetwork(struct vertex **network,char name[25],struct date dob,int com
 		(*network)->dob = dob;
 		(*network)->comments = comments;
 		(*network)->next = NULL;
+		(*network)->discovered = 0;
 	}
 	else
 	{
@@ -45,6 +53,7 @@ void createNetwork(struct vertex **network,char name[25],struct date dob,int com
 		cur->dob = dob;
 		cur->comments = comments;
 		cur->next = NULL;
+		cur->discovered = 0;
 	}
 }
 
@@ -95,10 +104,7 @@ void createConnections(vertex **network)
 					cin>>choice;
 					switch(choice)
 					{
-						case 1:
-						
-							
-							
+						case 1:			
 							if(cur2->adj  == NULL)
 							{
 								cur2->adj = new edge;
@@ -137,15 +143,47 @@ void createConnections(vertex **network)
 						case 2:
 							break;
 						default:
-							cout<<"Enter Valid Choice\n";
+							cout<<"\nEnter Valid Choice\n";
 					}
 				}
 				while(choice != 2);
 			}
 			cur2 = cur2->next;
 		}
-		cout<<"Friends Added";
+		cout<<"\nAll Possible Connections Added\n";
 		cur1 = cur1->next;
+	}
+}
+
+void display(vertex *v)
+{
+	cout<<"\nDetails of User\n";
+	cout<<"Name : "<<v->name<<"\nNumber of comments:"<<v->comments<<"\nDate of Birth :"<<v->dob.day<<"-"<<v->dob.month<<"-"<<v->dob.year<<"\n"; 
+} 
+
+
+vertex* maxFriends(vertex **v)
+{
+	vertex *maxfren= *v;
+	int fcount,maxcount = 0;
+	Stack<vertex*> s;
+	s.push(*v);
+	while(!s.isEmpty())
+	{
+		vertex *temp = s.pop();
+		temp->discovered = 2; 
+		edge *e = temp->adj;
+		fcount = 0;
+		while(e != NULL)
+		{
+			if(e->v->discovered != 1)
+			{
+				e->v->discovered = 1;
+				s.push(e->v);
+			}
+			fcount ++;
+
+		}
 	}
 }
 
@@ -183,6 +221,28 @@ int main()
 	cout<<"Adding Connections\n";
 	createConnections(&network);
 	
-	
+	int choice;
+	do
+	{
+		cout<<"\n\nPress 1 to Search For person with Maximum Friends\n";
+		cout<<"Press 2 to find Maximum and Minimum comments\n";
+		cout<<"Press 3 to search by Birthday\n";
+		cout<<"Enter Choice :";
+		cin>>choice;
+		switch(choice)
+		{
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			default:
+				cout<<"\n Enter Valid Option\n";
+		}
+	}
+	while();
 }
 
