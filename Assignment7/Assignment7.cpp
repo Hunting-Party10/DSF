@@ -1,6 +1,5 @@
-#include<iostream>
+#include<bits/stdc++.h>
 #include"UF.h"
-#include<string.h>
 using namespace std;
 
 
@@ -10,12 +9,20 @@ struct vertex
 	struct vertex *next;
 	char name[25];
 	int vertexid;
+	int edgecount;
 };
 
 struct edge
 {
 	struct vertex *v;
 	struct edge *adj;
+	int weight;
+};
+
+struct edgelist
+{
+	int u;
+	int v;
 	int weight;
 };
 
@@ -54,6 +61,7 @@ void createNetwork(struct vertex **network,char name[25],int id)
 		(*network)->adj = NULL;
 		(*network)->next = NULL;
 		(*network)->vertexid = id;
+		(*network)->edgecount = 0;
 	}
 	else
 	{
@@ -66,6 +74,7 @@ void createNetwork(struct vertex **network,char name[25],int id)
 		cur->next = NULL;
 		cur->adj = NULL;
 		cur->vertexid = id;
+		cur->edgecount=0;
 	}
 }
 
@@ -111,7 +120,7 @@ void createConnections(vertex **network)
 								cur->adj = new edge;
 								cur->adj->v = cur1;
 								cur->adj->adj = NULL;
-								cur2->adj->weight = weight;
+								cur->adj->weight = weight;
 								
 							}
 							if(cur1->adj  == NULL)
@@ -131,6 +140,8 @@ void createConnections(vertex **network)
 								cur->adj->adj = NULL;
 								cur->adj->weight =weight;
 							}
+							cur1->edgecount++;
+							cur2->edgecount++;
 							choice =2;
 							break;
 							
@@ -149,34 +160,55 @@ void createConnections(vertex **network)
 	}
 }
 
-int kruskalMST(vertex *network,int size)
+bool edgelistcomparator(edgelist e1,edgelist e2)
 {
-	UF mst(size);
+	return (e1.weight<e2.weight);
+}
+
+int kruskalMST(vertex *network,int nodes)
+{
+	if(network == NULL)
+		return  0;
+	int size = 0;
 	int edges = 0;
-	int min_weight = 1000000;
-	int network_cost =0;
-	vertex *cur;
-	edge *e,*minedge;
-	while(edges != size-1)
+	int network_cost = 0;
+	vertex *cur = network;
+	while(cur != NULL)
 	{
-		cur = network;
-		min_weight = 1000000;
-		while(cur != NULL)
+		size += cur->edgecount;
+		cur = cur->next;
+	}
+	UF mst(size);
+	edgelist el[size];
+	edge *e;
+	cur = network;
+	int i=0;
+	while(cur != NULL)
+	{
+		e = cur->adj;
+		while(e != NULL)
 		{
-			e = cur->adj;
-			while(e != NULL)
-			{
-				if(!mst.isConnected(cur->vertexid,e->v->vertexid) && e->weight < min_weight){
-					min_weight = e->weight;	
-					minedge = e;		
-				}
-				e = e->adj;
-			}
-			mst.Union(cur->vertexid,minedge->v->vertexid);
-			mst.Union(0,cur->vertexid);
-			network_cost += min_weight;
-			cur = cur->next;
+			el[i].u = cur->vertexid;
+			el[i].v = e->v->vertexid;
+			el[i++].weight = e->weight;
+			e=e->adj;
 		}
+		cur = cur->next;
+	}
+	sort(el,el+size,edgelistcomparator);
+	i = 0;
+	cout<<endl;
+	while(edges != nodes - 1)
+	{
+		edgelist temp = el[i];
+		if(!mst.isConnected(temp.u,temp.v))
+		{
+			cout<<"Edge Added "<<temp.u<<"-"<<temp.v<<"\nWeight = "<<temp.weight<<"\n\n";
+			network_cost += temp.weight;
+			edges ++;
+			mst.Union(temp.u,temp.v);
+		}
+		i++;
 	}
 	return network_cost;
 }
