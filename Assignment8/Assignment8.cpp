@@ -1,43 +1,68 @@
 #include<bits/stdc++.h>
-#define inf 999999
+#include<iostream>
+#define V 6
+using namespace std;
 struct Graph
 {
 	int weight;
 	int label;
+	int prev;
 };
 
-void shortestpath(Graph **g,int start,int size)
+int relaxation(int u,int v,Graph g[V][V])
 {
-	for(int i = 1;i<=size;i++)
-		g[i][i].label = inf;
-	
-	g[start][start].label = 0;
-	int current = start;
-	
-	int temp;
-	for(int i = current + 1; i<=size; i++)
-	{
-	 	if(g[current] != 0)
-	 	{
-		}
-	}
-	
+	if (g[v][v].label > g[u][u].label + g[u][v].weight)
+		return g[u][u].label + g[u][v].weight;
+	return g[v][v].label;
 }
 
-void createConnections()
+int find_min(Graph g[V][V])
 {
-	for(int i = 1;i<=size;i++)
-		for(int j = 1;j<=size;j++)
-			g[i][j].weight = 0;
-	for(int i = 1;i <= size;i++)
+	int min = INT_MAX,index =-1,i;
+	for( i = 1;i < V;i++)
 	{
-		for(int j = i;j <= size;j++)
+		if(g[i][i].label < min && g[i][i].prev == -1 && g[i][i].label != INT_MAX)
+			min = g[i][i].label;
+			index = i;
+	}
+	return i;
+}
+
+void shortest_path(int start,Graph g[V][V])
+{
+	for(int i = 1;i<V;i++)
+	{
+		g[i][i].label = INT_MAX;
+		g[i][i].prev = -1;
+	}
+	g[start][start].label = 0;
+	int previous_vertex = -1;
+	for(int i = 1 ;i < V; i++)
+	{
+		int u = find_min(g);
+		g[u][u].prev = previous_vertex;
+		for(int j = 1;j<V ;j++)
+		{
+			if(g[i][j].weight != 0 && g[j][j].prev == -1)
+				g[j][j].label = relaxation(i,j,g);
+		}
+		previous_vertex = u;
+	}
+}
+
+
+void createConnections(Graph g[V][V],char name[V][25])
+{
+	for(int i = 1;i<V;i++)
+		for(int j = 1;j<V;j++)
+			g[i][j].weight = 0;
+	for(int i = 1;i < V;i++)
+	{
+		for(int j = 1;j < V;j++)
 		{
 			cout<<"Enter Weight for "<<name[i-1]<<" - "<<name[j-1]<<" : ";
-			cin>>g[i][j];
-			g[j][i] = g[i][j];
-`		}
-			
+			cin>>g[i][j].weight;
+		}
 	}
 }
 
@@ -45,29 +70,31 @@ void createConnections()
 int main()
 {
 	cout<<"Building Network\n";
-	cout<<"Enter Number of current people on the network:";
-	int size;
-	cin>>size;
+	//cout<<"Enter Number of current people on the network:";
+	//cin>>V;
 	cout<<"\n\n";
-	Graph g[size + 1][size + 1];
-	char name[size][25];
-	for(int i=0;i<size;i++)
+	Graph g[V][V];
+	char name[V][25];
+	for(int i=1;i<V;i++)
 	{
 		cout<<"Vertex Name - ";
 		cin>>name[i];
 	}
-	
-	createConnections(g,size);
-	
+
+	createConnections(g,name);
+
 	char query[25];
 	cout<<"\n\nEnter Vertex for where you want to start :";
 	cin>>query;
 	int index = 0;
-	for(int i=0;i<size;i++)
+	for(int i=1;i<V;i++)
 		if(strcmp(name[i],query)==0)
 			index = i;
-			
+
 	if(index != 0)
-		shortestpath(g,index,size);
-	
+		shortest_path(index,g);
+
+		for(int i=1;i<V;i++)
+			cout<<g[i][i].label<<"\n";
+
 }
