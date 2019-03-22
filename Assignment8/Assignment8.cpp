@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 #include<iostream>
-#define V 6
+#define V 5
 using namespace std;
 struct Graph
 {
@@ -60,8 +60,12 @@ void createConnections(Graph g[V][V],char name[V][25])
 	{
 		for(int j = 1;j < V;j++)
 		{
-			cout<<"Enter Weight for "<<name[i-1]<<" - "<<name[j-1]<<" : ";
-			cin>>g[i][j].weight;
+			if(i != j){
+				cout<<"Enter Weight for "<<name[i]<<" - "<<name[j]<<" : ";
+				cin>>g[i][j].weight;
+			}
+			else
+				g[i][j].weight = 0;
 		}
 	}
 }
@@ -90,11 +94,10 @@ int main()
 	for(int i=1;i<V;i++)
 		if(strcmp(name[i],query)==0)
 			index = i;
-
 	if(index != 0)
 		shortest_path(index,g);
-
+		cout<<"\n\n";
 		for(int i=1;i<V;i++)
-			cout<<g[i][i].label<<"\n";
-
+			if(i != index)
+				cout<<"Shortest path to Vertex - "<<name[i]<<" = "<<g[i][i].label<<"\n";
 }
