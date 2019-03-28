@@ -2,14 +2,10 @@
 #include<string.h>
 #include"Stack.h"
 using namespace std;
-
 /*
 1-discovered
 2-visited
 */
-
-
-
 struct date
 {
 	int day;
@@ -73,12 +69,12 @@ void createNetwork(struct vertex **network,char name[25],struct date dob,int com
 
 bool checkfriendshipStatus(vertex *cur1,vertex *cur2)
 {
-	
+
 	if(cur1->adj == NULL || cur2->adj == NULL)
 	{
 		//cout<<"\nList Empty";
 		return false;
-		
+
 	}
 	else
 	{
@@ -94,21 +90,21 @@ bool checkfriendshipStatus(vertex *cur1,vertex *cur2)
 		}
 		//cout<<"\nCould not find friend in the adj list";
 		return false;
-	}	
+	}
 }
 
 void createConnections(vertex **network)
 {
 	vertex *cur1= *network , *cur2;
-	
+
 	while(cur1 != NULL)
 	{
 		cout <<"\nEnter Friends for "<<cur1->name;
-		int choice;	
+		int choice;
 		cur2 = *network;
 		while(cur2 != NULL)
 		{
-			
+
 			if(cur2 != cur1 && !checkfriendshipStatus(cur1,cur2))
 			{
 				do
@@ -118,7 +114,7 @@ void createConnections(vertex **network)
 					cin>>choice;
 					switch(choice)
 					{
-						case 1:			
+						case 1:
 							if(cur2->adj  == NULL)
 							{
 								cur2->adj = new edge;
@@ -133,7 +129,7 @@ void createConnections(vertex **network)
 								cur->adj = new edge;
 								cur->adj->v = cur1;
 								cur->adj->adj = NULL;
-								
+
 							}
 							if(cur1->adj  == NULL)
 							{
@@ -152,7 +148,7 @@ void createConnections(vertex **network)
 							}
 							choice =2;
 							break;
-							
+
 						case 2:
 							break;
 						default:
@@ -171,8 +167,8 @@ void createConnections(vertex **network)
 void display(vertex *v)
 {
 	cout<<"\nDetails of User\n";
-	cout<<"Name : "<<v->name<<"\nNumber of comments:"<<v->comments<<"\nDate of Birth :"<<v->dob.day<<"-"<<v->dob.month<<"-"<<v->dob.year<<"\n"; 
-} 
+	cout<<"Name : "<<v->name<<"\nNumber of comments:"<<v->comments<<"\nDate of Birth :"<<v->dob.day<<"-"<<v->dob.month<<"-"<<v->dob.year<<"\n";
+}
 
 networkstats netStats(vertex **v)
 {
@@ -319,7 +315,7 @@ int main()
 	vertex *found = NULL;
 	int comments;
 	struct vertex *network = NULL;
-	
+
 	cout<<"Building Network\n";
 	cout<<"Enter Number of current people on the network:";
 	int c;
@@ -337,16 +333,16 @@ int main()
 		cin>>dob.month;
 		cout<<"Enter Year:";
 		cin>>dob.year;
-		
+
 		cout<<"Enter Number of comments:";
 		cin>>comments;
 		createNetwork(&network,name,dob,comments);
 		cout<<"\n";
 	}
-	
+
 	cout<<"Adding Connections\n";
 	createConnections(&network);
-	
+
 	int choice;
 	networkstats nt = networkStatsBFS(network);
 	do
@@ -362,13 +358,13 @@ int main()
 			case 1:
 				display(nt.f);
 				break;
-				
+
 			case 2:
 				cout<<"\nDetails of user with Maximum Comments\n";
 				display(nt.maxcoms);
 				cout<<"\n\nDetails of user with Minimum Comments\n";
 				display(nt.mincoms);
-				
+
 				break;
 			case 3:
 				cout<<"Enter Date of Birth to be searched\n";
@@ -395,4 +391,3 @@ int main()
 	}
 	while(choice != 4);
 }
-

@@ -1,7 +1,8 @@
-
 #include<bits/stdc++.h>
 #include"UF.h"
 using namespace std;
+
+
 struct vertex
 {
 	struct edge *adj;
@@ -27,21 +28,30 @@ struct edgelist
 
 bool checkfriendshipStatus(vertex *cur1,vertex *cur2)
 {
-
+	
 	if(cur1->adj == NULL || cur2->adj == NULL)
+	{
+		//cout<<"\nList Empty";
 		return false;
+		
+	}
 	else
 	{
 		edge *e = cur1->adj;
 		while(e != NULL)
 		{
 			if(e->v == cur2)
+			{
+				//cout<<"\nThey Are Friends";
 				return true;
+			}
 			e = e->adj;
 		}
+		//cout<<"\nCould not find friend in the adj list";
 		return false;
-	}
+	}	
 }
+
 void createNetwork(struct vertex **network,char name[25],int id)
 {
 	if(*network == NULL)
@@ -72,15 +82,15 @@ void createConnections(vertex **network)
 {
 	vertex *cur1= *network , *cur2;
 	int weight;
-
+	
 	while(cur1 != NULL)
 	{
 		cout <<"\nEnter Adjecent Edges for "<<cur1->name;
-		int choice;
+		int choice;	
 		cur2 = *network;
 		while(cur2 != NULL)
 		{
-
+			
 			if(cur2 != cur1 && !checkfriendshipStatus(cur1,cur2))
 			{
 				do
@@ -90,7 +100,7 @@ void createConnections(vertex **network)
 					cin>>choice;
 					switch(choice)
 					{
-						case 1:
+						case 1:	
 							cout<<"Enter Weight of the Edge:";
 							cin>>weight;
 							cout<<"\n\n";
@@ -100,6 +110,7 @@ void createConnections(vertex **network)
 								cur2->adj->v = cur1;
 								cur2->adj->adj = NULL;
 								cur2->adj->weight = weight;
+								
 							}
 							else
 							{
@@ -110,7 +121,7 @@ void createConnections(vertex **network)
 								cur->adj->v = cur1;
 								cur->adj->adj = NULL;
 								cur->adj->weight = weight;
-
+								
 							}
 							if(cur1->adj  == NULL)
 							{
@@ -133,7 +144,7 @@ void createConnections(vertex **network)
 							cur2->edgecount++;
 							choice =2;
 							break;
-
+							
 						case 2:
 							break;
 						default:
@@ -148,7 +159,13 @@ void createConnections(vertex **network)
 		cur1 = cur1->next;
 	}
 }
-int kruskal(vertex *network,int nodes)
+
+bool edgelistcomparator(edgelist e1,edgelist e2)
+{
+	return (e1.weight<e2.weight);
+}
+
+int kruskalMST(vertex *network,int nodes)
 {
 	if(network == NULL)
 		return  0;
@@ -162,37 +179,36 @@ int kruskal(vertex *network,int nodes)
 		cur = cur->next;
 	}
 	UF mst(size);
-
-	mst.Union(0,start->vertexid);
-	while(edges != nodes-1)
+	edgelist el[size];
+	edge *e;
+	cur = network;
+	int i=0;
+	while(cur != NULL)
 	{
-		vertex *minimum = NULL;
-		int mincost = 10000000;
-		vertex *temp = network;
-		edgelist el;
-		while(temp != NULL)
+		e = cur->adj;
+		while(e != NULL)
 		{
-			if(mst.isConnected(temp->vertexid,0))
-			{
-				edge *temp2 = temp->adj;
-				while(temp2 != NULL)
-				{
-					if(temp2->weight < mincost && !mst.isConnected(0,temp2->v->vertexid))
-					{
-						minimum = temp2->v;
-						mincost = temp2->weight;
-						el.u = temp->vertexid;
-						el.v= temp2->v->vertexid;
-					}
-					temp2=temp2->adj;
-				}
-			}
-			temp = temp->next;
+			el[i].u = cur->vertexid;
+			el[i].v = e->v->vertexid;
+			el[i++].weight = e->weight;
+			e=e->adj;
 		}
-		mst.Union(0,minimum->vertexid);
-		cout<<"Edge Added "<<el.u<<"-"<<el.v<<"\nWeight = "<<mincost<<"\n\n";
-		network_cost +=mincost;
-		edges++;
+		cur = cur->next;
+	}
+	sort(el,el+size,edgelistcomparator);
+	i = 0;
+	cout<<endl;
+	while(edges != nodes - 1)
+	{
+		edgelist temp = el[i];
+		if(!mst.isConnected(temp.u,temp.v))
+		{
+			cout<<"Edge Added "<<temp.u<<"-"<<temp.v<<"\nWeight = "<<temp.weight<<"\n\n";
+			network_cost += temp.weight;
+			edges ++;
+			mst.Union(temp.u,temp.v);
+		}
+		i++;
 	}
 	return network_cost;
 }
@@ -205,7 +221,6 @@ int main()
 	cout<<"Enter Number of current people on the network:";
 	int c,id =1;
 	cin>>c;
-	cout<<"\n\n";
 	int size = c;
 	while(c--)
 	{
@@ -217,10 +232,9 @@ int main()
 	}
 	cout<<"Adding Connections\n";
 	createConnections(&network);
-	if(start != NULL)
-		cout<<"Telephone line Cost = "<<kruskal(network,size);
-	else
-		cout<<"Vertex Not Found\n";
-	cout<<"\n\n";
-
+	
+	cout<<"Finding MST";
+	cout<<"Cost of MST is :"<<kruskalMST(network,size);
+	
 }
+
