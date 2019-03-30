@@ -31,8 +31,10 @@ public:
 	 		t[i].chain = -1;
 			strcpy(t[i].e.name,"Nothing");
 			t[i].e.id = 0;
+			t[i].e.salary = 0;
 		}
 	 }
+	 ~HashTableReplacement(){delete[] t;}
 	int insert(emp);
 	void display(int);
 	int search(int);
@@ -44,17 +46,19 @@ int HashTableReplacement::insert(emp data)
 {
 	int i = data.phone%hash;
 
-	if(t[i].e.phone == -1)//When there is a direct hash match
+	if(t[i].e.phone == -1)//When there is a direct hash match and slot is empty
 	{
 		t[i].e = data;
 		return 0;
 	}
-	else if(t[i].phone %hash == i)
+	else if(t[i].e.phone %hash == i)//When there is a direct hash match and slot is not empty
 	{
 		int start = i;
+		//Find End of chain
 		while(t[start].chain != -1)
 			start = t[start].chain;
-		int j = start;	
+			//Linear Probe to find the next Open spot
+		int j = start;
 		do
 		{
 			if(start == hash)
@@ -73,9 +77,10 @@ int HashTableReplacement::insert(emp data)
 		return -1;
 	}
 	else
-	{	
+	{
 		int start = i;
 		emp temp = t[start].e;
+		//Replace The already present data
 		do
 		{
 			if(start == hash)
@@ -85,90 +90,97 @@ int HashTableReplacement::insert(emp data)
 			start++;
 		}
 		while(start != i);
+		//Linear Probing finds open spot
 		if(start == i)
 			return -2;//table full;
-		//cout<<"Start of chain is:"<<start<<"\n";
+		//Replace data
 		t[start].e = temp;
 		t[i].e = data;
-		int chaintemp = t[i].chain;
-		t[i].chain = -1;
-		while(t[chaintemp].chain != -1)
-			chaintemp = t[chaintemp].chain;
-		t[chaintemp].chain = start;
+		int j = t[start].e.phone % hash;
+		while(t[j].chain != i)
+			j = t[j].chain;
+		if(t[i].chain != -1)
+		{
+			int chaintemp = t[i].chain;
+			t[j].chain = chaintemp;
+			chaintemp = t[i].chain;
+			t[i].chain = -1;
+			while(t[chaintemp].chain != -1)
+				chaintemp = t[chaintemp].chain;
+				//find end of chain and replace it with the new end chain location
+			t[chaintemp].chain = start;
+		}
+		else
+			t[j].chain = start;
+		return 0;
 	}
 }
 
 
 int HashTableReplacement::search(int query)
 {
-	
+
 	int i = query%hash;
-	if(i == t[i].e.phone % hash && query == t[i].e.phone)
+	if(query == t[i].e.phone)
 		return i;
 	else
 	{
-		int start = i;
-		do
+		int start = t[i].chain;
+		while(start != -1)
 		{
-			if(start == hash)
-				start = 0;
-			if(t[start].e.phone == -1)
-				break;
-			if(i == t[start].e.phone % hash)
-			{
-				start++;
-				break;
-			}
-			start++;
-		}
-		while(start != i);
-		while(start != -1 && t[start].e.phone !=query)
+			if(t[start].e.phone == query)
+				return start;
 			start = t[start].chain;
-		if(start == -1)
-			return -1;
-		return start;
-		
+		}
 	}
 	return -1;
-	
+
 }
 
 void HashTableReplacement::display(int index)
 {
-	cout<<index<<"\t"<<t[index].e.id<<"\t"<<t[index].e.name<<"\t"<<t[index].e.phone<<"\t"<<t[index].e.salary<<"\n";
+	cout<<index<<"\t"<<t[index].e.id<<"\t"<<t[index].e.name<<"\t"<<t[index].e.phone<<"\t"<<t[index].e.salary<<"\t"<<t[index].chain<<"\n";
 }
 
 void HashTableReplacement::displayall()
 {
 	for(int i =0 ;i<hash;i++)
 		display(i);
+	cout<<"\n\n";
 }
 
 int main()
 {
-	/*
+/*
 	emp e;
 	strcpy(e.name,"Hello");
 	e.id = 1;
-	e.phone = 400;
+	e.phone = 46;
 	e.salary = 0;
-	HashTable h(10);
+	HashTableReplacement h(10);
 	h.insert(e);
+	h.displayall();
 	e.phone = 406;
 	h.insert(e);
+	h.displayall();
 	//h.displayall();
 	e.phone = 4006;
 	h.insert(e);
+	h.displayall();
 	//h.displayall();
 	//cout<<"\n\n";
 	e.phone = 7;
 	h.insert(e);
+	h.displayall();
 	e.phone = 6;
 	h.insert(e);
-	e.phone = 77;
+	h.displayall();
+//	e.phone = 77;
+//	h.insert(e);
+	e.phone  = 8;
 	h.insert(e);
-	//h.displayall();
-	cout<<h.search(400);
+	h.displayall();
+	cout<<h.search(406);
 	return 0;
-	*/
+*/
 }
