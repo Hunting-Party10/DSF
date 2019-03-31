@@ -294,6 +294,7 @@ int main()
 			case 1:
 				cout<<"Enter Employee ID:";
 				cin>>e.id;
+				cin.ignore();
 				cout<<"Enter Employee Name:";
 				cin.getline(e.name,25);
 				cout<<"Enter Phone Number:";
