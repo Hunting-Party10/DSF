@@ -4,13 +4,12 @@ class UF
 {
 private:
 	int *a;
-	int size;
+	int *size;
+	int root(int);
 public:
 	UF(int);
 	~UF();
 	void Union(int,int);
-	int find(int);
-	bool isConnected(int,int);
 };
 #include"UF.cpp"
 #endif
